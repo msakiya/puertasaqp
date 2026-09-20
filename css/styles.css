@@ -1,0 +1,15 @@
+/* Styles for Todo Puertas Arequipa */
+
+.gradient-overlay {
+    background: linear-gradient(135deg, rgba(15, 44, 89, 0.95) 0%, rgba(11, 30, 61, 0.85) 100%);
+}
+
+.pulse-btn {
+    animation: pulse-ring 2s infinite;
+}
+
+@keyframes pulse-ring {
+    0% { box-shadow: 0 0 0 0 rgba(255, 184, 0, 0.7); }
+    70% { box-shadow: 0 0 0 15px rgba(255, 184, 0, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 184, 0, 0); }
+}
