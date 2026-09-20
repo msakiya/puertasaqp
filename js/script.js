@@ -25,7 +25,151 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     }
+
+    /**
+     * Motors Carousel / Slider Controller
+     */
+    initMotorsSlider();
 });
+
+function initMotorsSlider() {
+    const track = document.getElementById('motorSliderTrack');
+    const prevBtn = document.getElementById('motorPrevBtn');
+    const nextBtn = document.getElementById('motorNextBtn');
+    const dotsContainer = document.getElementById('motorDotsContainer');
+
+    if (!track || !prevBtn || !nextBtn || !dotsContainer) return;
+
+    const items = track.querySelectorAll('.slider-item');
+    const totalItems = items.length;
+    let currentIndex = 0;
+    let autoSlideInterval = null;
+
+    function getItemsPerView() {
+        if (window.innerWidth >= 1024) return 3;
+        if (window.innerWidth >= 640) return 2;
+        return 1;
+    }
+
+    function getMaxIndex() {
+        const itemsPerView = getItemsPerView();
+        return Math.max(0, totalItems - itemsPerView);
+    }
+
+    function createDots() {
+        dotsContainer.innerHTML = '';
+        const maxIndex = getMaxIndex();
+        for (let i = 0; i <= maxIndex; i++) {
+            const dot = document.createElement('button');
+            dot.className = `dot-indicator ${i === currentIndex ? 'active' : ''}`;
+            dot.setAttribute('aria-label', `Ir al slide ${i + 1}`);
+            dot.addEventListener('click', () => {
+                currentIndex = i;
+                updateSlider();
+                resetAutoSlide();
+            });
+            dotsContainer.appendChild(dot);
+        }
+    }
+
+    function updateSlider() {
+        const itemsPerView = getItemsPerView();
+        const maxIndex = getMaxIndex();
+        
+        if (currentIndex > maxIndex) {
+            currentIndex = maxIndex;
+        }
+        if (currentIndex < 0) {
+            currentIndex = 0;
+        }
+
+        const percentage = (currentIndex * 100) / itemsPerView;
+        track.style.transform = `translateX(-${percentage}%)`;
+
+        // Update active dot
+        const dots = dotsContainer.querySelectorAll('.dot-indicator');
+        dots.forEach((dot, index) => {
+            if (index === currentIndex) {
+                dot.classList.add('active');
+            } else {
+                dot.classList.remove('active');
+            }
+        });
+    }
+
+    function nextSlide() {
+        const maxIndex = getMaxIndex();
+        if (currentIndex >= maxIndex) {
+            currentIndex = 0;
+        } else {
+            currentIndex++;
+        }
+        updateSlider();
+    }
+
+    function prevSlide() {
+        const maxIndex = getMaxIndex();
+        if (currentIndex <= 0) {
+            currentIndex = maxIndex;
+        } else {
+            currentIndex--;
+        }
+        updateSlider();
+    }
+
+    function startAutoSlide() {
+        stopAutoSlide();
+        autoSlideInterval = setInterval(nextSlide, 4500);
+    }
+
+    function stopAutoSlide() {
+        if (autoSlideInterval) {
+            clearInterval(autoSlideInterval);
+        }
+    }
+
+    function resetAutoSlide() {
+        stopAutoSlide();
+        startAutoSlide();
+    }
+
+    prevBtn.addEventListener('click', () => {
+        prevSlide();
+        resetAutoSlide();
+    });
+
+    nextBtn.addEventListener('click', () => {
+        nextSlide();
+        resetAutoSlide();
+    });
+
+    track.addEventListener('mouseenter', stopAutoSlide);
+    track.addEventListener('mouseleave', startAutoSlide);
+
+    window.addEventListener('resize', () => {
+        createDots();
+        updateSlider();
+    });
+
+    createDots();
+    updateSlider();
+    startAutoSlide();
+}
+
+/**
+ * Direct Quotation Trigger for specific motor product
+ */
+function cotizarMotor(motorName) {
+    const selectElem = document.getElementById('tipo_servicio');
+    if (selectElem) {
+        selectElem.value = 'Venta de motores y accesorios';
+        toggleOtroServiceInput(selectElem);
+    }
+    const cotizacionSec = document.getElementById('cotizacion');
+    if (cotizacionSec) {
+        cotizacionSec.scrollIntoView({ behavior: 'smooth' });
+    }
+}
 
 /**
  * Dynamic Input Handler for "Otro" Service Option
@@ -91,10 +235,6 @@ function sanitizeInput(str) {
 
 /**
  * Form Submission Logic and Mail Dispatch Simulation
- * Configured according to instructions:
- * Destination Email: msakiya14@gmail.com
- * Sender: marcos@todopuertasarequipa.com
- * Subject: ✅ Nuevo interesado en Todo Puertas Arequipa
  */
 function handleFormSubmit(event) {
     event.preventDefault();

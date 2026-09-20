@@ -13,3 +13,51 @@
     70% { box-shadow: 0 0 0 15px rgba(255, 184, 0, 0); }
     100% { box-shadow: 0 0 0 0 rgba(255, 184, 0, 0); }
 }
+
+/* Motor Slider / Carousel Styles */
+.slider-container {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+}
+
+.slider-track {
+    display: flex;
+    transition: transform 0.4s ease-in-out;
+    will-change: transform;
+}
+
+.slider-item {
+    flex: 0 0 100%;
+    max-width: 100%;
+    padding: 0 0.5rem;
+}
+
+@media (min-width: 640px) {
+    .slider-item {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+}
+
+@media (min-width: 1024px) {
+    .slider-item {
+        flex: 0 0 33.333333%;
+        max-width: 33.333333%;
+    }
+}
+
+.dot-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #D1D5DB;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.dot-indicator.active {
+    width: 28px;
+    border-radius: 9999px;
+    background-color: #0F2C59;
+}
