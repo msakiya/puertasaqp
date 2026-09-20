@@ -103,7 +103,7 @@
     <!-- Custom CSS Stylesheet -->
     <link rel="stylesheet" href="css/styles.css">
 </head>
-<body class="bg-gray-50 text-gray-800 font-sans antialiased flex flex-col min-h-screen selection:bg-brand-yellow selection:text-brand-navy">
+<body class="bg-[#F4F5F8] text-gray-800 font-sans antialiased flex flex-col min-h-screen selection:bg-brand-yellow selection:text-brand-navy">
 
     <!-- Top Emergency Contact Header -->
     <div class="bg-brand-navy text-white text-xs sm:text-sm py-2 px-4 border-b border-blue-900/50">
@@ -129,18 +129,12 @@
     </div>
 
     <!-- Navigation Bar -->
-    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md shadow-md transition-all duration-300">
+    <header class="sticky top-0 z-40 bg-[#F4F5F8]/95 backdrop-blur-md border-b border-gray-200/80 shadow-sm transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
-                <!-- Brand Logo -->
-                <a href="#inicio" class="flex items-center space-x-3 group">
-                    <div class="w-12 h-12 bg-brand-blue rounded-xl flex items-center justify-center text-brand-yellow text-2xl font-black shadow-lg group-hover:scale-105 transition transform">
-                        <i class="fa-solid fa-door-open"></i>
-                    </div>
-                    <div>
-                        <span class="text-xl sm:text-2xl font-black text-brand-blue tracking-tight block leading-none">TODO PUERTAS</span>
-                        <span class="text-xs font-bold text-brand-gold tracking-widest block uppercase mt-0.5">Arequipa - Perú</span>
-                    </div>
+                <!-- Brand Logo Image -->
+                <a href="#inicio" class="flex items-center space-x-3 group py-1">
+                    <img src="images/logo.png" alt="Todo Puertas Arequipa" class="h-12 sm:h-14 w-auto object-contain group-hover:scale-105 transition duration-300">
                 </a>
 
                 <!-- Desktop Navigation Links -->
@@ -279,7 +273,7 @@
         </section>
 
         <!-- Featured Focus: Puertas Corredizas de Garaje -->
-        <section id="corredizas" class="py-16 bg-white">
+        <section id="corredizas" class="py-16 bg-[#F4F5F8] border-b border-gray-200/60">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center max-w-3xl mx-auto mb-12">
                     <span class="text-brand-gold font-extrabold uppercase text-xs tracking-widest bg-yellow-100 px-3 py-1 rounded-full">Especialidad de la Casa</span>
@@ -983,12 +977,9 @@
                 
                 <!-- Col 1: About -->
                 <div class="space-y-4">
-                    <div class="flex items-center space-x-3">
-                        <div class="w-10 h-10 bg-brand-blue rounded-lg flex items-center justify-center text-brand-yellow text-xl font-black">
-                            <i class="fa-solid fa-door-open"></i>
-                        </div>
-                        <span class="text-lg font-black tracking-tight text-white">TODO PUERTAS AREQUIPA</span>
-                    </div>
+                    <a href="#inicio" class="block py-1">
+                        <img src="images/logo.png" alt="Todo Puertas Arequipa" class="h-12 sm:h-14 w-auto object-contain">
+                    </a>
                     <p class="text-xs text-gray-300 leading-relaxed">
                         Fabricamos e instalamos puertas eléctricas de garaje para uso residencial e industrial: Levadiza, Seccional, Corrediza, Batiente, Enrollable y Cortafuego.
                     </p>

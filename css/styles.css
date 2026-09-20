@@ -1,5 +1,10 @@
 /* Styles for Todo Puertas Arequipa */
 
+body {
+    background-color: #F4F5F8;
+    color: #1F2937;
+}
+
 .gradient-overlay {
     background: linear-gradient(135deg, rgba(15, 44, 89, 0.95) 0%, rgba(11, 30, 61, 0.85) 100%);
 }
