@@ -33,10 +33,14 @@
     '<a href="https://www.youtube.com/channel/UChZ9FEQuyl-pZiUJOsYUwqA" target="_blank" rel="noopener noreferrer" aria-label="YouTube de Todo Puertas Arequipa" title="YouTube" class="inline-flex size-10 items-center justify-center rounded-md bg-white/10 text-white transition hover:bg-[#FF0000]"><i class="fa-brands fa-youtube text-lg"></i></a>' +
     '</div>';
 
-  html = html.replace(
-    'Ventas e instalaciones en toda Arequipa y el sur del',
-    socialBlock + '<!--social-->Ventas e instalaciones en toda Arequipa y el sur del'
-  );
+  const marker = 'class="text-sm font-semibold text-yellow">Ventas e instalaciones';
+  const idx = html.indexOf(marker);
+  if (idx !== -1) {
+    const end = html.indexOf('</p>', idx);
+    if (end !== -1) {
+      html = html.slice(0, end + 4) + socialBlock + html.slice(end + 4);
+    }
+  }
 
   const bar = '<div class="flex items-center gap-4">' +
     '<a href="https://www.facebook.com/todopuertasarequipa/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 hover:text-yellow" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i> Facebook</a>' +
@@ -44,7 +48,7 @@
     '<p>Soporte oficial: <a href="https://todopuertasarequipa.com" class="text-yellow underline">todopuertasarequipa.com</a></p></div>';
 
   html = html.replace(
-    'Soporte oficial: <a href="https://todopuertasarequipa.com" class="text-yellow underline">todopuertasarequipa.com</a>',
+    '<p>Soporte oficial: <a href="https://todopuertasarequipa.com" class="text-yellow underline">todopuertasarequipa.com</a></p>',
     bar
   );
 
