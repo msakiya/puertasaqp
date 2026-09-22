@@ -1,315 +1,221 @@
-/**
- * Application Logic for Todo Puertas Arequipa
- */
+document.addEventListener("DOMContentLoaded", () => {
+  const mobileMenuBtn = document.getElementById("mobile-menu-btn");
+  const mobileMenu = document.getElementById("mobile-menu");
+  const mobileLinks = document.querySelectorAll(".mobile-link");
 
-document.addEventListener('DOMContentLoaded', () => {
-    /**
-     * Mobile Navigation Drawer Toggle
-     */
-    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-    const mobileMenu = document.getElementById('mobile-menu');
-    const mobileLinks = document.querySelectorAll('.mobile-link');
+  if (mobileMenuBtn && mobileMenu) {
+    mobileMenuBtn.addEventListener("click", () => {
+      const open = mobileMenu.classList.toggle("hidden") === false;
+      document.body.style.overflow = open ? "hidden" : "";
+      mobileMenuBtn.setAttribute("aria-expanded", String(open));
+    });
+  }
 
-    if (mobileMenuBtn && mobileMenu) {
-        mobileMenuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
+  mobileLinks.forEach((link) => {
+    link.addEventListener("click", () => {
+      if (mobileMenu) {
+        mobileMenu.classList.add("hidden");
+        document.body.style.overflow = "";
+      }
+    });
+  });
+
+  const navLinks = document.querySelectorAll("nav[aria-label='Principal'] .nav-link");
+  const ids = ["inicio", "puertas", "servicios", "motores", "proyectos", "ubicanos"];
+  const nodes = ids.map((id) => document.getElementById(id)).filter(Boolean);
+  if (nodes.length && "IntersectionObserver" in window) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (!visible) return;
+        navLinks.forEach((a) => {
+          a.classList.toggle("active", a.getAttribute("href") === `#${visible.target.id}`);
         });
-    }
+      },
+      { rootMargin: "-25% 0px -55% 0px", threshold: [0.15, 0.35, 0.6] }
+    );
+    nodes.forEach((n) => observer.observe(n));
+  }
 
-    if (mobileLinks) {
-        mobileLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                if (mobileMenu) {
-                    mobileMenu.classList.add('hidden');
-                }
-            });
-        });
-    }
+  document.querySelectorAll("[data-quote]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const value = btn.getAttribute("data-quote") || "";
+      const select = document.getElementById("tipo_servicio");
+      const banner = document.getElementById("quotePrefill");
+      const options = Array.from(select.options).map((o) => o.value);
+      if (options.includes(value)) {
+        select.value = value;
+        if (banner) banner.classList.add("hidden");
+      } else {
+        select.value = "Venta de motores y accesorios";
+        if (banner) {
+          banner.textContent = "Producto seleccionado: " + value;
+          banner.classList.remove("hidden");
+        }
+      }
+      toggleOtro();
+      document.getElementById("cotizacion")?.scrollIntoView({ behavior: "smooth" });
+    });
+  });
 
-    /**
-     * Motors Carousel / Slider Controller
-     */
-    initMotorsSlider();
+  document.getElementById("tipo_servicio")?.addEventListener("change", toggleOtro);
+
+  document.querySelectorAll("[data-video]").forEach((btn) => {
+    btn.addEventListener("click", () => openVideo(btn.getAttribute("data-video"), btn.getAttribute("data-title")));
+  });
+  document.getElementById("videoClose")?.addEventListener("click", closeVideo);
+  document.getElementById("videoModal")?.addEventListener("click", (e) => {
+    if (e.target.id === "videoModal") closeVideo();
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeVideo();
+  });
+
+  initMotorsSlider();
 });
+
+function toggleOtro() {
+  const select = document.getElementById("tipo_servicio");
+  const wrap = document.getElementById("otroWrap");
+  const input = document.getElementById("otro_servicio");
+  const show = select && select.value === "Otro";
+  if (wrap) wrap.classList.toggle("hidden", !show);
+  if (input) input.required = Boolean(show);
+}
+
+function sanitizeInput(str) {
+  return String(str || "").replace(/[&<>"']/g, (m) => ({
+    "&": "&",
+    "<": "<",
+    ">": ">",
+    '"': """,
+    "'": "&#039;",
+  }[m]));
+}
+
+function handleFormSubmit(event) {
+  event.preventDefault();
+  const trap = document.getElementById("website_trap").value;
+  if (trap) return false;
+
+  const submitBtn = document.getElementById("submitBtn");
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = "Procesando solicitud...";
+
+  const nombre = sanitizeInput(document.getElementById("nombre").value);
+  const telefono = sanitizeInput(document.getElementById("telefono").value);
+  const correo = sanitizeInput(document.getElementById("correo").value);
+  let servicio = document.getElementById("tipo_servicio").value;
+  if (servicio === "Otro") servicio = "Otro: " + document.getElementById("otro_servicio").value;
+  const banner = document.getElementById("quotePrefill");
+  if (banner && !banner.classList.contains("hidden")) {
+    servicio += " — " + banner.textContent.replace("Producto seleccionado: ", "");
+  }
+  const servicioSolicitado = sanitizeInput(servicio);
+
+  setTimeout(() => {
+    document.getElementById("leadSummaryBox").innerHTML = `
+      <p class="font-semibold text-navy mb-1">Resumen del pedido</p>
+      <p><strong>Nombre:</strong> ${nombre}</p>
+      <p><strong>Teléfono:</strong> ${telefono}</p>
+      <p><strong>Correo:</strong> ${correo}</p>
+      <p><strong>Servicio:</strong> ${servicioSolicitado}</p>
+    `;
+    document.getElementById("main-content").classList.add("hidden");
+    document.getElementById("thank-you-view").classList.remove("hidden");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Enviar solicitud de cotización';
+    document.getElementById("leadForm").reset();
+    if (banner) banner.classList.add("hidden");
+    toggleOtro();
+  }, 700);
+}
+
+function returnToLanding() {
+  document.getElementById("thank-you-view").classList.add("hidden");
+  document.getElementById("main-content").classList.remove("hidden");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function openVideo(id, title) {
+  const modal = document.getElementById("videoModal");
+  const frame = document.getElementById("videoFrame");
+  frame.src = `https://www.youtube.com/embed/${id}?autoplay=1`;
+  frame.title = title || "Video de proyecto";
+  modal.classList.remove("hidden");
+  modal.classList.add("flex");
+  document.body.style.overflow = "hidden";
+}
+
+function closeVideo() {
+  const modal = document.getElementById("videoModal");
+  const frame = document.getElementById("videoFrame");
+  frame.src = "";
+  modal.classList.add("hidden");
+  modal.classList.remove("flex");
+  document.body.style.overflow = "";
+}
 
 function initMotorsSlider() {
-    const track = document.getElementById('motorSliderTrack');
-    const prevBtn = document.getElementById('motorPrevBtn');
-    const nextBtn = document.getElementById('motorNextBtn');
-    const dotsContainer = document.getElementById('motorDotsContainer');
+  const track = document.getElementById("motorSliderTrack");
+  const prevBtn = document.getElementById("motorPrevBtn");
+  const nextBtn = document.getElementById("motorNextBtn");
+  const dotsContainer = document.getElementById("motorDotsContainer");
+  if (!track || !prevBtn || !nextBtn || !dotsContainer) return;
 
-    if (!track || !prevBtn || !nextBtn || !dotsContainer) return;
+  const items = track.querySelectorAll(".slider-item");
+  const totalItems = items.length;
+  let currentIndex = 0;
 
-    const items = track.querySelectorAll('.slider-item');
-    const totalItems = items.length;
-    let currentIndex = 0;
-    let autoSlideInterval = null;
-
-    function getItemsPerView() {
-        if (window.innerWidth >= 1024) return 3;
-        if (window.innerWidth >= 640) return 2;
-        return 1;
-    }
-
-    function getMaxIndex() {
-        const itemsPerView = getItemsPerView();
-        return Math.max(0, totalItems - itemsPerView);
-    }
-
-    function createDots() {
-        dotsContainer.innerHTML = '';
-        const maxIndex = getMaxIndex();
-        for (let i = 0; i <= maxIndex; i++) {
-            const dot = document.createElement('button');
-            dot.className = `dot-indicator ${i === currentIndex ? 'active' : ''}`;
-            dot.setAttribute('aria-label', `Ir al slide ${i + 1}`);
-            dot.addEventListener('click', () => {
-                currentIndex = i;
-                updateSlider();
-                resetAutoSlide();
-            });
-            dotsContainer.appendChild(dot);
-        }
-    }
-
-    function updateSlider() {
-        const itemsPerView = getItemsPerView();
-        const maxIndex = getMaxIndex();
-        
-        if (currentIndex > maxIndex) {
-            currentIndex = maxIndex;
-        }
-        if (currentIndex < 0) {
-            currentIndex = 0;
-        }
-
-        const percentage = (currentIndex * 100) / itemsPerView;
-        track.style.transform = `translateX(-${percentage}%)`;
-
-        // Update active dot
-        const dots = dotsContainer.querySelectorAll('.dot-indicator');
-        dots.forEach((dot, index) => {
-            if (index === currentIndex) {
-                dot.classList.add('active');
-            } else {
-                dot.classList.remove('active');
-            }
-        });
-    }
-
-    function nextSlide() {
-        const maxIndex = getMaxIndex();
-        if (currentIndex >= maxIndex) {
-            currentIndex = 0;
-        } else {
-            currentIndex++;
-        }
+  function getItemsPerView() {
+    if (window.innerWidth >= 1024) return 3;
+    if (window.innerWidth >= 640) return 2;
+    return 1;
+  }
+  function getMaxIndex() {
+    return Math.max(0, totalItems - getItemsPerView());
+  }
+  function createDots() {
+    dotsContainer.innerHTML = "";
+    for (let i = 0; i <= getMaxIndex(); i++) {
+      const dot = document.createElement("button");
+      dot.className = `dot-indicator ${i === currentIndex ? "active" : ""}`;
+      dot.setAttribute("aria-label", `Ir al slide ${i + 1}`);
+      dot.addEventListener("click", () => {
+        currentIndex = i;
         updateSlider();
+      });
+      dotsContainer.appendChild(dot);
     }
-
-    function prevSlide() {
-        const maxIndex = getMaxIndex();
-        if (currentIndex <= 0) {
-            currentIndex = maxIndex;
-        } else {
-            currentIndex--;
-        }
-        updateSlider();
-    }
-
-    function startAutoSlide() {
-        stopAutoSlide();
-        autoSlideInterval = setInterval(nextSlide, 4500);
-    }
-
-    function stopAutoSlide() {
-        if (autoSlideInterval) {
-            clearInterval(autoSlideInterval);
-        }
-    }
-
-    function resetAutoSlide() {
-        stopAutoSlide();
-        startAutoSlide();
-    }
-
-    prevBtn.addEventListener('click', () => {
-        prevSlide();
-        resetAutoSlide();
+  }
+  function updateSlider() {
+    const maxIndex = getMaxIndex();
+    if (currentIndex > maxIndex) currentIndex = maxIndex;
+    if (currentIndex < 0) currentIndex = 0;
+    track.style.transform = `translateX(-${(currentIndex * 100) / getItemsPerView()}%)`;
+    dotsContainer.querySelectorAll(".dot-indicator").forEach((dot, index) => {
+      dot.classList.toggle("active", index === currentIndex);
     });
+  }
+  function nextSlide() {
+    currentIndex = currentIndex >= getMaxIndex() ? 0 : currentIndex + 1;
+    updateSlider();
+  }
+  function prevSlide() {
+    currentIndex = currentIndex <= 0 ? getMaxIndex() : currentIndex - 1;
+    updateSlider();
+  }
 
-    nextBtn.addEventListener('click', () => {
-        nextSlide();
-        resetAutoSlide();
-    });
-
-    track.addEventListener('mouseenter', stopAutoSlide);
-    track.addEventListener('mouseleave', startAutoSlide);
-
-    window.addEventListener('resize', () => {
-        createDots();
-        updateSlider();
-    });
-
+  prevBtn.addEventListener("click", prevSlide);
+  nextBtn.addEventListener("click", nextSlide);
+  window.addEventListener("resize", () => {
     createDots();
     updateSlider();
-    startAutoSlide();
-}
-
-/**
- * Direct Quotation Trigger for specific motor product
- */
-function cotizarMotor(motorName) {
-    const selectElem = document.getElementById('tipo_servicio');
-    if (selectElem) {
-        selectElem.value = 'Venta de motores y accesorios';
-        toggleOtroServiceInput(selectElem);
-    }
-    const cotizacionSec = document.getElementById('cotizacion');
-    if (cotizacionSec) {
-        cotizacionSec.scrollIntoView({ behavior: 'smooth' });
-    }
-}
-
-/**
- * Dynamic Input Handler for "Otro" Service Option
- */
-function toggleOtroServiceInput(selectElem) {
-    const otroContainer = document.getElementById('otro_servicio_container');
-    const otroInput = document.getElementById('otro_servicio');
-    if (selectElem.value === 'Otro') {
-        otroContainer.classList.remove('hidden');
-        otroInput.setAttribute('required', 'true');
-        otroInput.focus();
-    } else {
-        otroContainer.classList.add('hidden');
-        otroInput.removeAttribute('required');
-        otroInput.value = '';
-    }
-}
-
-/**
- * Video Player Modal Handler
- */
-function playVideoModal(videoUrl, title) {
-    const modal = document.getElementById('videoModal');
-    const iframe = document.getElementById('videoModalIframe');
-    const titleElem = document.getElementById('videoModalTitle');
-    
-    titleElem.textContent = title || 'Demostración de Trabajo - Todo Puertas Arequipa';
-    iframe.src = videoUrl + "?autoplay=1";
-    modal.classList.remove('hidden');
-    modal.classList.add('flex');
-}
-
-function closeVideoModal() {
-    const modal = document.getElementById('videoModal');
-    const iframe = document.getElementById('videoModalIframe');
-    iframe.src = '';
-    modal.classList.add('hidden');
-    modal.classList.remove('flex');
-}
-
-// Close modal on escape key
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-        closeVideoModal();
-    }
-});
-
-/**
- * Anti-XSS Sanitizer Utility
- */
-function sanitizeInput(str) {
-    if (!str) return '';
-    return str.replace(/[&<>"']/g, function(m) {
-        return {
-            '&': '&amp;',
-            '<': '&lt;',
-            '>': '&gt;',
-            '"': '&quot;',
-            "'": '&#039;'
-        }[m];
-    });
-}
-
-/**
- * Form Submission Logic and Mail Dispatch Simulation
- */
-function handleFormSubmit(event) {
-    event.preventDefault();
-
-    // Check bot trap honeypot
-    const trap = document.getElementById('website_trap').value;
-    if (trap) {
-        console.warn('Bot detected.');
-        return false;
-    }
-
-    const submitBtn = document.getElementById('submitBtn');
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '<i class="fa-solid fa-spinner animate-spin"></i> Procesando solicitud...';
-
-    // Gather & sanitize form data
-    const rawNombre = document.getElementById('nombre').value;
-    const rawTelefono = document.getElementById('telefono').value;
-    const rawCorreo = document.getElementById('correo').value;
-    let rawServicio = document.getElementById('tipo_servicio').value;
-
-    if (rawServicio === 'Otro') {
-        const otroDetalle = document.getElementById('otro_servicio').value;
-        rawServicio = "Otro: " + otroDetalle;
-    }
-
-    const nombre = sanitizeInput(rawNombre);
-    const telefono = sanitizeInput(rawTelefono);
-    const correo = sanitizeInput(rawCorreo);
-    const servicioSolicitado = sanitizeInput(rawServicio);
-
-    const emailPayload = {
-        to: "msakiya14@gmail.com",
-        from: "marcos@todopuertasarequipa.com",
-        subject: "✅ Nuevo interesado en Todo Puertas Arequipa",
-        body: `Hola, tienes un lead nuevo en tu página:\nNombre: ${nombre}\nTeléfono: ${telefono}\nCorreo: ${correo}\nServicio solicitado: ${servicioSolicitado}\n\nEste lead viene gracias a https://todopuertasarequipa.com`
-    };
-
-    console.log("Email dispatch simulation ready:", emailPayload);
-
-    // Simulate immediate server dispatch & redirect to Thank You page
-    setTimeout(() => {
-        // Populate summary inside thank you page
-        const summaryBox = document.getElementById('leadSummaryBox');
-        summaryBox.innerHTML = `
-            <p class="font-bold text-gray-800 text-xs mb-1">Resumen del Lead Registrado:</p>
-            <p><strong>Nombre:</strong> ${nombre}</p>
-            <p><strong>Teléfono:</strong> ${telefono}</p>
-            <p><strong>Correo:</strong> ${correo}</p>
-            <p><strong>Servicio:</strong> ${servicioSolicitado}</p>
-        `;
-
-        // Update WhatsApp pre-filled link with requested text
-        const waBaseText = encodeURIComponent(`Hola, vengo de tu página web, deseo más información de tus puertas.`);
-        document.getElementById('whatsappThankYouLink').href = `https://wa.me/51959325030?text=${waBaseText}`;
-
-        // Switch View to "Página de Gracias"
-        document.getElementById('main-content').classList.add('hidden');
-        document.getElementById('thank-you-view').classList.remove('hidden');
-        
-        // Scroll to top
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-
-        // Reset button state
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = '<span>Enviar Solicitud de Cotización</span> <i class="fa-solid fa-paper-plane"></i>';
-        document.getElementById('leadForm').reset();
-    }, 800);
-}
-
-/**
- * Return from Thank You view to landing page
- */
-function returnToLanding() {
-    document.getElementById('thank-you-view').classList.add('hidden');
-    document.getElementById('main-content').classList.remove('hidden');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+  createDots();
+  updateSlider();
+  setInterval(nextSlide, 5000);
 }

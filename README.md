@@ -1,27 +1,19 @@
 # Todo Puertas Arequipa
 
-Sitio web oficial de **Todo Puertas Arequipa** - Especialistas en fabricación, instalación, mantenimiento y reparación de puertas de garaje corredizas, levadizas, seccionales y automáticas en Arequipa y el sur del Perú.
+Sitio web oficial de **Todo Puertas Arequipa**: fabricación, instalación, mantenimiento y reparación de puertas automáticas de garaje en Arequipa y todo el sur del Perú.
 
-## 🚀 Estructura del Proyecto
+Sitio publicado: [https://msakiya.github.io/puertasaqp/](https://msakiya.github.io/puertasaqp/)
 
-```
-Puertas Arequipa/
-├── index.html         # Documento HTML principal
-├── css/
-│   └── styles.css     # Hojas de estilo personalizadas
-└── js/
-    └── script.js      # Lógica interactiva de la aplicación
-```
+## Qué incluye
 
-## 🛠️ Tecnologías Utilizadas
+- Menú: Inicio, Puertas, Servicios, Motores, Proyectos, Ubícanos
+- Catálogo de 8 sistemas de puertas (seccional, seccional lateral, batiente, corrediza, enrollable, levadiza, principales y cortafuego)
+- Fabricación a medida y asesoría técnica
+- Venta de motores Liftmaster, BFT, Jielong, Beninca y Erreka
+- Formulario de cotización y WhatsApp 24/7
 
-- **HTML5**: Estructura semántica con SEO y datos estructurados JSON-LD (Schema.org).
-- **CSS3 & Tailwind CSS**: Diseño responsivo y moderno.
-- **JavaScript (ES6+)**: Interacción responsiva de menú, reproductor modal de video y validación de formulario de cotización.
-- **FontAwesome**: Iconografía vectorial.
-
-## 📞 Contacto y Soporte
+## Contacto
 
 - **Atención 24/7**: 959 325 030
 - **WhatsApp**: [+51 959 325 030](https://wa.me/51959325030)
-- **Sitio Web**: [https://todopuertasarequipa.com](https://todopuertasarequipa.com)
+- **Web**: [todopuertasarequipa.com](https://todopuertasarequipa.com)
