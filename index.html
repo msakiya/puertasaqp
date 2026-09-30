@@ -5,9 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Puertas Automáticas de Garaje en Arequipa | Todo Puertas</title>
   <link rel="icon" type="image/png" href="images/logo.png">
+  <script src="catalogo-a.js"></script>
+  <script src="catalogo-b.js"></script>
 </head>
 <body>
-  <script src="catalogo-motores.js"></script>
   <script>
     (async function () {
       const sources = [
@@ -54,16 +55,16 @@
         const wrapEnd = html.indexOf('</div>', zonasStart);
         if (wrapEnd !== -1) html = html.slice(0, zonasStart) + '<div class="mt-3 flex flex-wrap gap-2">' + zonasHTML + html.slice(wrapEnd);
       }
-
       html = html.replace(/src="images\/hero\.jpg" alt="[^"]*"/g, 'src="images/instalacion-de-puerta-garage-arequipa-2.jpg" alt="Instalación de puerta de garage en Arequipa - puerta seccional automática"');
       html = html.replace(/src="https:\/\/images\.unsplash\.com\/photo-1513694203232-719a280e022f[^"']*" alt="[^"]*"/g, 'src="images/instalacion-de-puerta-garage-arequipa-1.png" alt="Instalación de puerta de garage en Arequipa - fabricación a medida"');
       html = html.replace(/max-w-6xl/g, 'max-w-[90rem]');
 
-      if (window.TPA_CATALOGO) {
+      const catalogo = (window.TPA_CATALOGO_A || '') + (window.TPA_CATALOGO_B || '');
+      if (catalogo) {
         const motoresStart = html.indexOf('<section id="motores"');
         const motoresEnd = motoresStart !== -1 ? html.indexOf('</section>', motoresStart) : -1;
         if (motoresStart !== -1 && motoresEnd !== -1) {
-          html = html.slice(0, motoresStart) + window.TPA_CATALOGO + html.slice(motoresEnd);
+          html = html.slice(0, motoresStart) + catalogo + html.slice(motoresEnd);
         }
       }
 
