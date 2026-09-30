@@ -1,16 +1,22 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Puertas Automáticas de Garaje en Arequipa | Todo Puertas</title>
   <link rel="icon" type="image/png" href="images/logo.png">
 </head>
-
 <body>
   <script>
     (async function () {
+      await new Promise(function (resolve) {
+        const s = document.createElement('script');
+        s.src = 'tpa-photos.js?v=1';
+        s.onload = resolve;
+        s.onerror = resolve;
+        document.head.appendChild(s);
+      });
+
       const sources = [
         'https://cdn.jsdelivr.net/gh/msakiya/puertasaqp@0a21d50d9823489e5814c73318635426d564ae5d/index.html',
         'https://raw.githubusercontent.com/msakiya/puertasaqp/0a21d50d9823489e5814c73318635426d564ae5d/index.html'
@@ -97,11 +103,23 @@
         }
       }
 
+      function b64toUrl(b64) {
+        const bin = atob(b64);
+        const arr = new Uint8Array(bin.length);
+        for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+        return URL.createObjectURL(new Blob([arr], { type: 'image/jpeg' }));
+      }
+      if (window.TPA_HERO) {
+        html = html.replace(/images\/hero\.jpg/g, b64toUrl(window.TPA_HERO));
+      }
+      if (window.TPA_FAB) {
+        html = html.replace(/https:\/\/images\.unsplash\.com\/photo-1513694203232-719a280e022f[^"']*/g, b64toUrl(window.TPA_FAB));
+      }
+
       document.open();
       document.write(html);
       document.close();
     })();
   </script>
 </body>
-
 </html>
