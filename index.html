@@ -9,13 +9,17 @@
 <body>
   <script>
     (async function () {
-      await new Promise(function (resolve) {
-        const s = document.createElement('script');
-        s.src = 'tpa-photos.js?v=1';
-        s.onload = resolve;
-        s.onerror = resolve;
-        document.head.appendChild(s);
-      });
+      async function loadScript(src) {
+        await new Promise(function (resolve) {
+          const s = document.createElement('script');
+          s.src = src;
+          s.onload = resolve;
+          s.onerror = resolve;
+          document.head.appendChild(s);
+        });
+      }
+      await loadScript('tpa-hero.js?v=1');
+      await loadScript('tpa-fab.js?v=1');
 
       const sources = [
         'https://cdn.jsdelivr.net/gh/msakiya/puertasaqp@0a21d50d9823489e5814c73318635426d564ae5d/index.html',
@@ -40,85 +44,40 @@
         '<a href="https://www.facebook.com/todopuertasarequipa/" target="_blank" rel="noopener noreferrer" aria-label="Facebook de Todo Puertas Arequipa" title="Facebook" class="inline-flex size-10 items-center justify-center rounded-md bg-white/10 text-white transition hover:bg-[#1877F2]"><i class="fa-brands fa-facebook-f text-lg"></i></a>' +
         '<a href="https://www.youtube.com/channel/UChZ9FEQuyl-pZiUJOsYUwqA" target="_blank" rel="noopener noreferrer" aria-label="YouTube de Todo Puertas Arequipa" title="YouTube" class="inline-flex size-10 items-center justify-center rounded-md bg-white/10 text-white transition hover:bg-[#FF0000]"><i class="fa-brands fa-youtube text-lg"></i></a>' +
         '</div>';
-
       const marker = 'class="text-sm font-semibold text-yellow">Ventas e instalaciones';
       const idx = html.indexOf(marker);
       if (idx !== -1) {
         const end = html.indexOf('</p>', idx);
-        if (end !== -1) {
-          html = html.slice(0, end + 4) + socialBlock + html.slice(end + 4);
-        }
+        if (end !== -1) html = html.slice(0, end + 4) + socialBlock + html.slice(end + 4);
       }
-
-      const bar = '<div class="flex items-center gap-4">' +
-        '<a href="https://www.facebook.com/todopuertasarequipa/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 hover:text-yellow" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i> Facebook</a>' +
-        '<a href="https://www.youtube.com/channel/UChZ9FEQuyl-pZiUJOsYUwqA" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 hover:text-yellow" aria-label="YouTube"><i class="fa-brands fa-youtube"></i> YouTube</a>' +
-        '<p>Soporte oficial: <a href="https://todopuertasarequipa.com" class="text-yellow underline">todopuertasarequipa.com</a></p></div>';
-
       html = html.replace(
         '<p>Soporte oficial: <a href="https://todopuertasarequipa.com" class="text-yellow underline">todopuertasarequipa.com</a></p>',
-        bar
+        '<div class="flex items-center gap-4"><a href="https://www.facebook.com/todopuertasarequipa/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 hover:text-yellow" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i> Facebook</a><a href="https://www.youtube.com/channel/UChZ9FEQuyl-pZiUJOsYUwqA" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 hover:text-yellow" aria-label="YouTube"><i class="fa-brands fa-youtube"></i> YouTube</a><p>Soporte oficial: <a href="https://todopuertasarequipa.com" class="text-yellow underline">todopuertasarequipa.com</a></p></div>'
       );
-
-      const emailsBlock =
-        '<a href="mailto:todopuertasarequipa@gmail.com" class="text-blue">todopuertasarequipa@gmail.com</a><br>' +
-        '<a href="mailto:info@todopuertasarequipa.com" class="text-blue">info@todopuertasarequipa.com</a>';
-      html = html.replace(
-        /<a href="mailto:marcos@todopuertasarequipa\.com"[^>]*>marcos@todopuertasarequipa\.com<\/a>/g,
-        emailsBlock
-      );
+      const emailsBlock = '<a href="mailto:todopuertasarequipa@gmail.com" class="text-blue">todopuertasarequipa@gmail.com</a><br><a href="mailto:info@todopuertasarequipa.com" class="text-blue">info@todopuertasarequipa.com</a>';
+      html = html.replace(/<a href="mailto:marcos@todopuertasarequipa\.com"[^>]*>marcos@todopuertasarequipa\.com<\/a>/g, emailsBlock);
       html = html.replace(/marcos@todopuertasarequipa\.com/g, 'todopuertasarequipa@gmail.com');
-
-      const footerEmails =
-        '<p><i class="fa-solid fa-envelope mr-2 text-yellow"></i>' +
-        '<a href="mailto:todopuertasarequipa@gmail.com" class="hover:text-yellow">todopuertasarequipa@gmail.com</a></p>' +
-        '<p><i class="fa-solid fa-envelope mr-2 text-yellow"></i>' +
-        '<a href="mailto:info@todopuertasarequipa.com" class="hover:text-yellow">info@todopuertasarequipa.com</a></p>';
       html = html.replace(
         /<p><i class="fa-solid fa-envelope mr-2 text-yellow"><\/i><a href="mailto:[^"]+" class="hover:text-yellow">[^<]+<\/a><\/p>/,
-        footerEmails
+        '<p><i class="fa-solid fa-envelope mr-2 text-yellow"></i><a href="mailto:todopuertasarequipa@gmail.com" class="hover:text-yellow">todopuertasarequipa@gmail.com</a></p><p><i class="fa-solid fa-envelope mr-2 text-yellow"></i><a href="mailto:info@todopuertasarequipa.com" class="hover:text-yellow">info@todopuertasarequipa.com</a></p>'
       );
-
-      const horarioTxt = 'Nuestro horario es flexible y extendido, para cotizaciones o reparaciones escribanos al WhatsApp 959325030';
-      html = html.replace(
-        /Emergencias, cotizaciones e instalaciones: las 24 horas, los 7 días\./g,
-        horarioTxt
-      );
-
-      const zonas = [
-        'Arequipa', 'Moquegua', 'Ilo', 'Tacna', 'Puno',
-        'Juliaca', 'Cusco', 'Madre de Dios', 'Puerto Maldonado', 'Todo el Perú'
-      ];
-      const zonasHTML = zonas.map(function (z) {
-        return '<span class="rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-semibold">' + z + '</span>';
-      }).join('');
-
+      html = html.replace(/Emergencias, cotizaciones e instalaciones: las 24 horas, los 7 días\./g, 'Nuestro horario es flexible y extendido, para cotizaciones o reparaciones escribanos al WhatsApp 959325030');
+      const zonas = ['Arequipa','Moquegua','Ilo','Tacna','Puno','Juliaca','Cusco','Madre de Dios','Puerto Maldonado','Todo el Perú'];
+      const zonasHTML = zonas.map(z => '<span class="rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-semibold">'+z+'</span>').join('');
       const zonasStart = html.indexOf('<div class="mt-3 flex flex-wrap gap-2">');
       if (zonasStart !== -1) {
         const wrapEnd = html.indexOf('</div>', zonasStart);
-        if (wrapEnd !== -1) {
-          html = html.slice(0, zonasStart) +
-            '<div class="mt-3 flex flex-wrap gap-2">' + zonasHTML +
-            html.slice(wrapEnd);
-        }
+        if (wrapEnd !== -1) html = html.slice(0, zonasStart) + '<div class="mt-3 flex flex-wrap gap-2">' + zonasHTML + html.slice(wrapEnd);
       }
-
       function b64toUrl(b64) {
         const bin = atob(b64);
         const arr = new Uint8Array(bin.length);
         for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
         return URL.createObjectURL(new Blob([arr], { type: 'image/jpeg' }));
       }
-      if (window.TPA_HERO) {
-        html = html.replace(/images\/hero\.jpg/g, b64toUrl(window.TPA_HERO));
-      }
-      if (window.TPA_FAB) {
-        html = html.replace(/https:\/\/images\.unsplash\.com\/photo-1513694203232-719a280e022f[^"']*/g, b64toUrl(window.TPA_FAB));
-      }
-
-      document.open();
-      document.write(html);
-      document.close();
+      if (window.TPA_HERO) html = html.replace(/images\/hero\.jpg/g, b64toUrl(window.TPA_HERO));
+      if (window.TPA_FAB) html = html.replace(/https:\/\/images\.unsplash\.com\/photo-1513694203232-719a280e022f[^"']*/g, b64toUrl(window.TPA_FAB));
+      document.open(); document.write(html); document.close();
     })();
   </script>
 </body>
