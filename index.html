@@ -54,8 +54,14 @@
         if (wrapEnd !== -1) html = html.slice(0, zonasStart) + '<div class="mt-3 flex flex-wrap gap-2">' + zonasHTML + html.slice(wrapEnd);
       }
 
-      html = html.replace(/src="images\/hero\.jpg"/g, 'src="images/hero-seccional.jpg"');
-      html = html.replace(/https:\/\/images\.unsplash\.com\/photo-1513694203232-719a280e022f[^"']*/g, 'images/fabricacion-medida.jpg');
+      html = html.replace(
+        /src="images\/hero\.jpg" alt="[^"]*"/g,
+        'src="images/instalacion-de-puerta-garage-arequipa-2.jpg" alt="Instalación de puerta de garage en Arequipa - puerta seccional automática"'
+      );
+      html = html.replace(
+        /src="https:\/\/images\.unsplash\.com\/photo-1513694203232-719a280e022f[^"']*" alt="[^"]*"/g,
+        'src="images/instalacion-de-puerta-garage-arequipa-1.png" alt="Instalación de puerta de garage en Arequipa - fabricación a medida"'
+      );
 
       document.open(); document.write(html); document.close();
     })();
